@@ -46,6 +46,7 @@ export default function Login() {
 
                 saveToken(token);
 
+                // TODO save user in db
                 const user = new User({
                     id: responseData.user.id,
                     email: responseData.user.email,
@@ -59,15 +60,8 @@ export default function Login() {
 
                 router.replace("/");
             }
-        } catch (error) {
-            Alert.alert("Login eșuat");
-        }
-
-        if (email === "test@example.com" && password === "1234") {
-            login();
-            router.replace("/");
-        } else {
-            Alert.alert("Login eșuat", "Email sau parola incorectă");
+        } catch (error: any) {
+            Alert.alert("Login eșuat", error);
         }
     };
 
