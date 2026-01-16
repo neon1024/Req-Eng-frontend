@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {
@@ -140,6 +141,8 @@ export default function DailyMood() {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
+            <BackButton />
+
             <Text style={styles.title}>Cum te simți azi?</Text>
 
             <FlatList
