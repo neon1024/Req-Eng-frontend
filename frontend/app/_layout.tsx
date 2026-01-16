@@ -56,43 +56,23 @@ export default function RootLayout() {
     useHideScrollbar();
 
     return (
-        <View style={styles.outerContainer}>
-            <View style={styles.appContainer}>
-                <ThemeProvider value={customDarkTheme}>
-                    <AuthProvider>
-                        <Stack
-                            screenOptions={{
-                                headerShown: false,
-                                contentStyle: { backgroundColor: "#0f172a" },
-                            }}
-                        >
-                            <Stack.Screen name="index" />
-                            <Stack.Screen
-                                name="login"
-                                options={{
-                                    presentation: "modal",
-                                    animation: "slide_from_bottom",
-                                }}
-                            />
-                            <Stack.Screen name="dailyMood" />
-                            <Stack.Screen name="doctor" />
-                            <Stack.Screen
-                                name="modal"
-                                options={{
-                                    presentation: "modal",
-                                    title: "Modal",
-                                }}
-                            />
-                            <Stack.Screen
-                                name="(tabs)"
-                                options={{ headerShown: false }}
-                            />
-                        </Stack>
-                        <StatusBar style="light" />
-                    </AuthProvider>
-                </ThemeProvider>
-            </View>
-        </View>
+        <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+            <AuthProvider>
+                <Stack>
+                    <Stack.Screen
+                        name="(tabs)"
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="modal"
+                        options={{ presentation: "modal", title: "Modal" }}
+                    />
+                </Stack>
+                <StatusBar style="auto" />
+            </AuthProvider>
+        </ThemeProvider>
     );
 }
 
