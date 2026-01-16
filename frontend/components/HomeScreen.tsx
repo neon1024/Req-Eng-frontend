@@ -1,5 +1,6 @@
 import { useAuth } from "@/app/context/AuthContext";
 import { styles } from "@/app/styles/home.styles";
+import { router } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 
 export default function HomeScreen() {
@@ -14,7 +15,7 @@ export default function HomeScreen() {
             <View style={styles.actions}>
                 <TouchableOpacity
                     style={styles.buttonPrimary}
-                    onPress={() => alert("")}
+                    onPress={() => router.replace("/dailyMood")}
                 >
                     <Text style={styles.buttonText}>Starea zilnică</Text>
                 </TouchableOpacity>
