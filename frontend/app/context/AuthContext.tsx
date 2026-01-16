@@ -1,4 +1,11 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+    createContext,
+    ReactNode,
+    useContext,
+    useEffect,
+    useState,
+} from "react";
 
 type AuthContextType = {
     isLoggedIn: boolean;
@@ -12,17 +19,31 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [token, setToken] = useState("");
+
+    useEffect(() => {
+        const loadToken = async () => {
+            const savedToken = await AsyncStorage.getItem("token");
+            if (savedToken) {
+                setToken(savedToken);
+                setIsLoggedIn(true);
+            }
+        };
+        loadToken();
+    }, []);
 
     const login = () => setIsLoggedIn(true);
-    const logout = () => {
-        saveToken("");
+
+    const logout = async () => {
+        await AsyncStorage.removeItem("token");
+        setToken("");
         setIsLoggedIn(false);
     };
 
-    // TODO session
-    const [token, setToken] = useState("");
-
-    const saveToken = (token: string) => setToken((prev) => token);
+    const saveToken = async (newToken: string) => {
+        setToken(newToken);
+        await AsyncStorage.setItem("token", newToken);
+    };
 
     return (
         <AuthContext.Provider

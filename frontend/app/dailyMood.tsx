@@ -59,7 +59,6 @@ export default function DailyMood() {
                 return;
             }
 
-            // Map rate to emoji
             const mappedMoods: MoodEntry[] = data.moods.map((m: any) => {
                 const match = moodOptions.find((o) => o.rating === m.rate);
                 return { ...m, emoji: match ? match.emoji : "❓" };
@@ -67,7 +66,6 @@ export default function DailyMood() {
 
             setPreviousMoods(mappedMoods);
 
-            // Select today's mood automatically if already tracked
             if (data.todayTracked && data.todayMood) {
                 const todayMatch = moodOptions.find(
                     (o) => o.rating === data.todayMood.rate
@@ -114,7 +112,7 @@ export default function DailyMood() {
                 return;
             }
 
-            // Add to previous moods
+            // Construiește noul mood
             const newEntry: MoodEntry = {
                 id: data.mood.id,
                 rate: data.mood.rate,
@@ -123,13 +121,16 @@ export default function DailyMood() {
                 emoji: selectedMood.emoji,
             };
 
+            // Adaugă în lista de mood-uri anterioare
             setPreviousMoods([newEntry, ...previousMoods]);
 
+            // Afișează alert-ul de succes
             Alert.alert(
                 "Stare înregistrată",
                 `Ai selectat ${selectedMood.emoji} cu rating ${selectedMood.rating}/10`
             );
 
+            // Resetează selecția
             setSelectedMood(null);
         } catch (err) {
             console.error(err);
@@ -141,7 +142,6 @@ export default function DailyMood() {
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Cum te simți azi?</Text>
 
-            {/* Emoji selector */}
             <FlatList
                 data={moodOptions}
                 horizontal
@@ -165,7 +165,6 @@ export default function DailyMood() {
                 }}
             />
 
-            {/* Rating selector */}
             <Text style={styles.ratingLabel}>
                 Rating: {selectedMood ? selectedMood.rating : "-"}
             </Text>
