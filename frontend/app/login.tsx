@@ -10,14 +10,59 @@ import {
     View,
 } from "react-native";
 
+import axios from "axios";
 import { useAuth } from "../app/context/AuthContext";
+
+import { User } from "@/models/User";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { login } = useAuth();
+    const { login, saveToken } = useAuth();
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
+        const data = { email, password };
+
+        try {
+            const response = await axios.post(
+                "http://localhost:3000/api/auth/login",
+                data,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const responseData = response.data;
+
+            const error = responseData.error;
+
+            if (error) {
+                const message = responseData.message;
+                Alert.alert("Login eșuat", message);
+            } else {
+                const token = responseData.token;
+
+                saveToken(token);
+
+                const user = new User({
+                    id: responseData.user.id,
+                    email: responseData.user.email,
+                    name: responseData.user.name,
+                    role: responseData.user.role,
+                    createdAt: responseData.user.createdAt,
+                    updatedAt: responseData.user.updatedAt,
+                });
+
+                login();
+
+                router.replace("/");
+            }
+        } catch (error) {
+            Alert.alert("Login eșuat");
+        }
+
         if (email === "test@example.com" && password === "1234") {
             login();
             router.replace("/");

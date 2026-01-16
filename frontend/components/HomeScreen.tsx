@@ -1,3 +1,4 @@
+import { useAuth } from "@/app/context/AuthContext";
 import { styles } from "@/app/styles/home.styles";
 import { Text, TouchableOpacity, View } from "react-native";
 
