@@ -1,148 +1,214 @@
 import { router } from "expo-router";
 import { useState } from "react";
 import {
+    ActivityIndicator,
     Alert,
-    Dimensions,
+    KeyboardAvoidingView,
+    Platform,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
     View,
 } from "react-native";
-
-import axios from "axios";
-import { useAuth } from "../app/context/AuthContext";
-
-import { User } from "@/models/User";
+import { useAuth } from "@/context/AuthContext";
+import { authAPI } from "@/services/api";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { login, saveToken } = useAuth();
+    const [isLoading, setIsLoading] = useState(false);
+    const { login } = useAuth();
 
     const handleLogin = async () => {
-        const data = { email, password };
+        if (!email.trim() || !password.trim()) {
+            Alert.alert("Eroare", "Te rog completează toate câmpurile.");
+            return;
+        }
+
+        setIsLoading(true);
 
         try {
-            const response = await axios.post(
-                "http://localhost:3000/api/auth/login",
-                data,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
+            const responseData = await authAPI.login(email, password);
 
-            const responseData = response.data;
-
-            const error = responseData.error;
-
-            if (error) {
-                const message = responseData.message;
-                Alert.alert("Login eșuat", message);
-            } else {
-                const token = responseData.token;
-
-                saveToken(token);
-
-                // TODO save user in db
-                const user = new User({
-                    id: responseData.user.id,
-                    email: responseData.user.email,
-                    name: responseData.user.name,
-                    role: responseData.user.role,
-                    createdAt: responseData.user.createdAt,
-                    updatedAt: responseData.user.updatedAt,
-                });
-
-                login();
-
-                router.replace("/");
+            if (responseData.error) {
+                Alert.alert("Autentificare eșuată", responseData.message || "Eroare necunoscută");
+                return;
             }
+
+            const userData = {
+                id: responseData.user.id,
+                email: responseData.user.email,
+                name: responseData.user.name,
+                role: responseData.user.role,
+            };
+
+            await login(responseData.token, userData);
+
+            router.replace("/");
         } catch (error: any) {
-            Alert.alert("Login eșuat", error);
+            const message = error.response?.data?.message || "A apărut o eroare la autentificare.";
+            Alert.alert("Autentificare eșuată", message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.form}>
-                <Text style={styles.title}>Autentificare</Text>
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            <View style={styles.formContainer}>
+                <View style={styles.header}>
+                    <Text style={styles.logo}>🧠</Text>
+                    <Text style={styles.title}>MindTrack</Text>
+                    <Text style={styles.subtitle}>
+                        Monitorizează-ți starea emoțională
+                    </Text>
+                </View>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                />
+                <View style={styles.form}>
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Email</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="exemplu@email.com"
+                            placeholderTextColor="#9ca3af"
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoComplete="email"
+                            editable={!isLoading}
+                        />
+                    </View>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Parolă"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                />
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Parolă</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="••••••••"
+                            placeholderTextColor="#9ca3af"
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry
+                            autoComplete="password"
+                            editable={!isLoading}
+                        />
+                    </View>
 
-                <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.button, isLoading && styles.buttonDisabled]}
+                        onPress={handleLogin}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <Text style={styles.buttonText}>Autentificare</Text>
+                        )}
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.footer}>
+                    <Text style={styles.footerText}>
+                        Aplicație pentru monitorizarea sănătății mentale
+                    </Text>
+                </View>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 }
-
-const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f0f4f8",
+        backgroundColor: "#0f172a",
+    },
+    formContainer: {
+        flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        padding: 16,
+        padding: 24,
+    },
+    header: {
+        alignItems: "center",
+        marginBottom: 40,
+    },
+    logo: {
+        fontSize: 64,
+        marginBottom: 16,
+    },
+    title: {
+        fontSize: 32,
+        fontWeight: "800",
+        color: "#f8fafc",
+        letterSpacing: 1,
+    },
+    subtitle: {
+        fontSize: 16,
+        color: "#94a3b8",
+        marginTop: 8,
     },
     form: {
         width: "100%",
-        maxWidth: 450,
-        padding: 24,
-        backgroundColor: "#ffffff",
-        borderRadius: 16,
+        maxWidth: 400,
+        backgroundColor: "#1e293b",
+        borderRadius: 20,
+        padding: 28,
         shadowColor: "#000",
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        elevation: 4,
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.3,
+        shadowRadius: 20,
+        elevation: 10,
     },
-    title: {
-        fontSize: 28,
-        fontWeight: "700",
-        marginBottom: 32,
-        textAlign: "center",
-        color: "#1f2937",
+    inputContainer: {
+        marginBottom: 20,
+    },
+    label: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#cbd5e1",
+        marginBottom: 8,
     },
     input: {
-        backgroundColor: "#f9fafb",
+        backgroundColor: "#334155",
         paddingVertical: 14,
         paddingHorizontal: 16,
         borderRadius: 12,
-        marginBottom: 16,
         fontSize: 16,
+        color: "#f8fafc",
         borderWidth: 1,
-        borderColor: "#d1d5db",
+        borderColor: "#475569",
     },
     button: {
-        backgroundColor: "#2563eb",
+        backgroundColor: "#6366f1",
         paddingVertical: 16,
         borderRadius: 12,
         alignItems: "center",
-        marginTop: 8,
+        marginTop: 12,
+        shadowColor: "#6366f1",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    buttonDisabled: {
+        backgroundColor: "#4f46e5",
+        opacity: 0.7,
     },
     buttonText: {
         color: "#fff",
         fontSize: 16,
-        fontWeight: "600",
+        fontWeight: "700",
+    },
+    footer: {
+        marginTop: 32,
+    },
+    footerText: {
+        color: "#64748b",
+        fontSize: 14,
+        textAlign: "center",
     },
 });

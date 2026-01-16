@@ -1,13 +1,26 @@
+import { useAuth } from "@/context/AuthContext";
+import HomeScreen from "@/components/HomeScreen";
 import LoginButton from "@/components/LoginButton";
-import { View } from "react-native";
-import HomeScreen from "../components/HomeScreen";
-import { styles } from "./styles/home.styles";
+import { View, StyleSheet, SafeAreaView } from "react-native";
 
 export default function Index() {
     return (
-        <View style={styles.container}>
-            <LoginButton />
-            <HomeScreen />
-        </View>
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                <LoginButton />
+                <HomeScreen />
+            </View>
+        </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: "#0f172a",
+    },
+    container: {
+        flex: 1,
+        backgroundColor: "#0f172a",
+    },
+});

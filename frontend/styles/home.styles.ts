@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f0f4f8",
+        backgroundColor: "#0f172a",
         justifyContent: "center",
         alignItems: "center",
         padding: 24,
@@ -12,14 +12,14 @@ export const styles = StyleSheet.create({
     greeting: {
         fontSize: 28,
         fontWeight: "700",
-        color: "#1f2937",
+        color: "#f8fafc",
         marginBottom: 8,
         textAlign: "center",
     },
 
     subtitle: {
         fontSize: 16,
-        color: "#4b5563",
+        color: "#94a3b8",
         textAlign: "center",
         marginBottom: 32,
         lineHeight: 22,
@@ -31,31 +31,36 @@ export const styles = StyleSheet.create({
     },
 
     buttonPrimary: {
-        backgroundColor: "#2563eb",
+        backgroundColor: "#6366f1",
         paddingVertical: 16,
         borderRadius: 12,
         marginBottom: 12,
         alignItems: "center",
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 3,
+        shadowColor: "#6366f1",
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 4 },
+        elevation: 4,
     },
 
     buttonSecondary: {
-        backgroundColor: "#93c5fd",
+        backgroundColor: "#334155",
         paddingVertical: 14,
         borderRadius: 12,
         marginBottom: 12,
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#475569",
     },
 
     buttonAlert: {
-        backgroundColor: "#ef4444",
+        backgroundColor: "#7f1d1d",
         paddingVertical: 14,
         borderRadius: 12,
         marginTop: 20,
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#991b1b",
     },
 
     buttonText: {
