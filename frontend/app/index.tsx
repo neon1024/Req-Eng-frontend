@@ -1,6 +1,5 @@
 import LoginButton from "@/components/LoginButton";
-import { router } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import HomeScreen from "../components/HomeScreen";
 import { styles } from "./styles/home.styles";
 
