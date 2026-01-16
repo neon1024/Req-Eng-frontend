@@ -5,12 +5,12 @@ import {
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import "react-native-reanimated";
-import { useEffect } from "react";
 
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { AuthProvider } from "@/context/AuthContext";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 // Hide scrollbar on web
 const useHideScrollbar = () => {
@@ -60,16 +60,17 @@ export default function RootLayout() {
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
             <AuthProvider>
-                <Stack>
-                    <Stack.Screen
-                        name="(tabs)"
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="modal"
-                        options={{ presentation: "modal", title: "Modal" }}
-                    />
-                </Stack>
+                <View style={styles.outerContainer}>
+                    <View style={styles.appContainer}>
+                        <Stack screenOptions={{ headerShown: false }}>
+                            <Stack.Screen name="(tabs)" />
+                            <Stack.Screen
+                                name="modal"
+                                options={{ presentation: "modal", title: "Modal", headerShown: true }}
+                            />
+                        </Stack>
+                    </View>
+                </View>
                 <StatusBar style="auto" />
             </AuthProvider>
         </ThemeProvider>
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
     appContainer: {
         flex: 1,
         width: "100%",
-        maxWidth: 1200,
+        maxWidth: 1000,
         backgroundColor: "#0f172a",
         // @ts-ignore - web only style to hide scrollbar
         overflow: "auto",
