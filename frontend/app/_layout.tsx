@@ -24,6 +24,10 @@ export default function RootLayout() {
             <AuthProvider>
                 <Stack>
                     <Stack.Screen
+                        name="index"
+                        options={{ headerShown: false }} // ascunde header-ul default
+                    />
+                    <Stack.Screen
                         name="dailyMood"
                         options={{ headerShown: false }} // ascunde header-ul default
                     />
